@@ -1,97 +1,147 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
-    Scanner sc = new Scanner(System.in);
-    //명령 입력받을 문자열
-    String command = "";
 
-    //명언 배열
-    WiseSaying[] wiseSayings = new WiseSaying[999];
-    //명언 번호
-    int number = -1;
+    private Scanner sc = new Scanner(System.in);
+    private int lastId = 0;
+    private List<WiseSaying> wiseSayings = new ArrayList<>();
 
     public void run() {
 
         System.out.println("== 명언 앱 ==");
-        //"종료" 명령이 입력될 때까지 반복
-        while (!command.equals("종료")) {
+
+        while (true) {
             System.out.print("명령) ");
-            //명령 입력 받기
-            command = sc.nextLine();
+            String command = sc.nextLine();
 
-            //"등록"을 입력받았을 경우
-            if (command.equals("등록")) registration();
+            if (command.equals("등록")) {
+                actionWrite();
 
-            //"목록"을 입력받았을 경우
-            if (command.equals("목록")) list();
+            } else if (command.equals("목록")) {
+                actionList();
 
-            //삭제 명령을 입력받았을 경우. 명언 id가 다르게 들어오기 때문에 정규표현식으로 검사
-            if (command.matches("^삭제\\?id=\\d+$")) delete();
+            } else if (command.startsWith("삭제")) {
+                actionDelete(command);
 
-            //수정 명령을 입력받았을 경우. 역시 정규표현식으로 검사
-            if (command.matches("^수정\\?id=\\d+$")) edit();
+            } else if (command.startsWith("수정")) {
+                actionModify(command);
+
+            } else if (command.equals("종료")) {
+                break;
+            }
         }
     }
 
-    public void registration() {
-        //명언 번호. 등록할 때마다 증가
-        number++;
+    private void actionModify(String command) {
 
-        WiseSaying wiseSaying = new WiseSaying();
-        wiseSaying.id = number + 1;
+        String[] commandBits = command.split("=");
+
+        if (commandBits.length < 2) {
+            System.out.println("번호를 입력해주세요.");
+            return;
+        }
+
+        String idStr = commandBits[1];
+        int id = Integer.parseInt(idStr);
+
+        WiseSaying wiseSaying = findByIdOrNull(id);
+
+        if(wiseSaying == null) {
+            System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
+            return;
+        }
+
+        System.out.println("명언(기존) : %s".formatted(wiseSaying.getSaying()));
         System.out.print("명언 : ");
-        wiseSaying.content = sc.nextLine();
+        String newSaying = sc.nextLine();
+        System.out.println("작가(기존) : %s".formatted(wiseSaying.getAuthor()));
         System.out.print("작가 : ");
-        wiseSaying.author = sc.nextLine();
-        wiseSayings[number] = wiseSaying;
+        String newAuthor = sc.nextLine();
 
-        System.out.println((number + 1) + "번 명언이 등록되었습니다.");
-
+        modify(wiseSaying, newSaying, newAuthor);
     }
 
-    public void list() {
+    private void modify(WiseSaying wiseSaying, String newSaying, String newAuthor) {
+        wiseSaying.setSaying(newSaying);
+        wiseSaying.setAuthor(newAuthor);
+    }
+
+    private void actionDelete(String command) {
+
+        String[] commandBits = command.split("=");
+
+        if (commandBits.length < 2) {
+            System.out.println("번호를 입력해주세요.");
+            return;
+        }
+
+        String idStr = commandBits[1];
+        int id = Integer.parseInt(idStr);
+
+        boolean result = delete(id);
+
+        if (result) {
+            System.out.println("%d번 명언이 삭제되었습니다.".formatted(id));
+        } else {
+            System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
+        }
+    }
+
+    private WiseSaying findByIdOrNull(int id) {
+        return wiseSayings.stream()
+                .filter(w -> w.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+
+//    private int findIndexById(int id) {
+//        return IntStream.range(0, wiseSayings.size())
+//                .filter(i -> wiseSayings.get(i).getId() == id)
+//                .findFirst()
+//                .orElse(-1);
+//    }
+
+    private boolean delete(int id) {
+        return wiseSayings.removeIf(w -> w.getId() == id);
+    }
+
+    private void actionList() {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
-        //마지막 번호의 명언부터 첫 번호의 명언까지 출력
-        for (int i = number; i >= 0; i--) {
-            if (wiseSayings[i] == null) continue;
-            System.out.println(wiseSayings[i].id + " / " + wiseSayings[i].author + " / " + wiseSayings[i].content);
+        List<WiseSaying> wiseSayings = findListDesc();
+
+        for (WiseSaying wiseSaying : wiseSayings) {
+            System.out.println("%d / %s / %s".formatted(wiseSaying.getId(), wiseSaying.getSaying(), wiseSaying.getAuthor()));
         }
     }
 
-    public void delete() {
-        //입력값에서 id숫자 추출
-        int id = Integer.parseInt(command.substring(6)) - 1;
-
-        //명언 최대 개수를 초과한 숫자를 입력받았을 경우 또는 존재하지 않는 명언일 경우 예외 처리
-        if (id > 999 || (wiseSayings[id] == null)) {
-            System.out.println((id + 1) + "번 명언은 존재하지 않습니다.");
-        }
-        //예외가 발생하지 않는다면 정상적으로 삭제 처리
-        else {
-            wiseSayings[id] = null;
-            System.out.println((id + 1) + "번 명언이 삭제되었습니다.");
-        }
+    private List<WiseSaying> findListDesc() {
+        return wiseSayings.reversed();
     }
 
-    public void edit() {
-        int id = Integer.parseInt(command.substring(6)) - 1;
+    private void actionWrite() {
+        System.out.print("명언 : ");
+        String saying = sc.nextLine();
+        System.out.print("작가 : ");
+        String author = sc.nextLine();
 
-        //삭제 동작과 같은 예외 처리
-        if (id > 999 || wiseSayings[id] == null) {
-            System.out.println((id + 1) + "번 명언은 존재하지 않습니다.");
-        }
-        //예외가 발생하지 않는다면 정상적으로 수정 처리
-        else {
-            System.out.println("명언(기존) : " + wiseSayings[id].content);
-            System.out.print("명언 : ");
-            wiseSayings[id].content = sc.nextLine();
-            System.out.println("작가(기존) : " + wiseSayings[id].author);
-            System.out.print("작가 : ");
-            wiseSayings[id].author = sc.nextLine();
-        }
+        WiseSaying wiseSaying = write(saying, author);
+
+        System.out.println("%d번 명언이 등록되었습니다.".formatted(wiseSaying.getId()));
+    }
+
+    private WiseSaying write(String saying, String author) {
+
+        lastId++;
+        WiseSaying wiseSaying = new WiseSaying(lastId, saying, author);
+        wiseSayings.add(wiseSaying);
+
+        return wiseSaying;
     }
 }
