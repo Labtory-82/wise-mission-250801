@@ -1,16 +1,13 @@
 package org.example;
 
-// 첫 글자 대문자. - 파스칼 표기법
-// 의미가 달라지는 부분 시작 글자 대문자. - 카멜 표기법
 public class WiseSaying {
-
     private int id;
-    private String saying;
+    private String content;
     private String author;
 
-    public WiseSaying(int id, String saying, String author) {
+    public WiseSaying(int id, String content, String author) {
         this.id = id;
-        this.saying = saying;
+        this.content = content;
         this.author = author;
     }
 
@@ -22,12 +19,12 @@ public class WiseSaying {
         this.id = id;
     }
 
-    public String getSaying() {
-        return saying;
+    public String getContent() {
+        return content;
     }
 
-    public void setSaying(String saying) {
-        this.saying = saying;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getAuthor() {
