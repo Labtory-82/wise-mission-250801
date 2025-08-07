@@ -9,8 +9,6 @@ public class App {
     private List <WiseSaying> wiseSayings = new ArrayList<>();
     //명언 번호
     private int number = -1;
-    //명령어 파라미터를 저장할 맵
-    private Map <String, String> paramMap = new HashMap<>();
 
     public void run() {
 
@@ -76,38 +74,6 @@ public class App {
 //                .orElse(-1);
 //
 //    }
-
-    private void setParams (String command) {
-
-        String[] commandBits = command.split("\\?");
-
-        String actionName = commandBits[0];
-        String queryString  = "";
-
-        if (commandBits.length > 1) {
-            queryString = commandBits[1];
-        }
-
-        String[] queryStringBits = queryString.split("&");
-
-        for (String param : queryStringBits) {
-            String[] paramBits = param.split("=");
-            String key = paramBits[0];
-            String value = null;
-
-            if (paramBits.length < 2) {
-                continue;
-            }
-
-            value = paramBits[1];
-
-            paramMap.put(key, value);
-        }
-    }
-
-    private String getParam(String key) {
-        return paramMap.get(key);
-    }
 
     private void delete() {
         //입력값에서 id숫자 추출
