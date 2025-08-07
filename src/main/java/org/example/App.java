@@ -1,16 +1,18 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
-    Scanner sc = new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in);
     //명령 입력받을 문자열
-    String command = "";
+    private String command = "";
 
     //명언 배열
-    WiseSaying[] wiseSayings = new WiseSaying[999];
+    private List <WiseSaying> wiseSayings = new ArrayList<>();
     //명언 번호
-    int number = -1;
+    private int number = -1;
 
     public void run() {
 
@@ -35,63 +37,71 @@ public class App {
         }
     }
 
-    public void registration() {
+    private  void registration() {
         //명언 번호. 등록할 때마다 증가
         number++;
 
-        WiseSaying wiseSaying = new WiseSaying();
-        wiseSaying.id = number + 1;
         System.out.print("명언 : ");
-        wiseSaying.content = sc.nextLine();
+        String saying = sc.nextLine();
         System.out.print("작가 : ");
-        wiseSaying.author = sc.nextLine();
-        wiseSayings[number] = wiseSaying;
+        String author = sc.nextLine();
+        WiseSaying wiseSaying = new WiseSaying(number + 1, saying, author);
+        wiseSayings.add(wiseSaying);
 
         System.out.println((number + 1) + "번 명언이 등록되었습니다.");
 
     }
 
-    public void list() {
+    private void list() {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
         //마지막 번호의 명언부터 첫 번호의 명언까지 출력
-        for (int i = number; i >= 0; i--) {
-            if (wiseSayings[i] == null) continue;
-            System.out.println(wiseSayings[i].id + " / " + wiseSayings[i].author + " / " + wiseSayings[i].content);
+        for (int i = wiseSayings.size() - 1; i >= 0; i--) {
+            System.out.println(wiseSayings.get(i).getId() + " / " +wiseSayings.get(i).getAuthor() + " / " + wiseSayings.get(i).getContent());
         }
     }
 
-    public void delete() {
+    private int findIndexById(int id) {
+        //명언 id로 명언을 찾는 메소드
+        for (int i = 0; i < wiseSayings.size(); i++) {
+            if (wiseSayings.get(i).getId() == id) {
+                return i;
+            }
+        }
+        return -1; //명언이 없을 경우 -1 반환
+    }
+
+    private  void delete() {
         //입력값에서 id숫자 추출
-        int id = Integer.parseInt(command.substring(6)) - 1;
+        int id = Integer.parseInt(command.substring(6));
 
-        //명언 최대 개수를 초과한 숫자를 입력받았을 경우 또는 존재하지 않는 명언일 경우 예외 처리
-        if (id > 999 || (wiseSayings[id] == null)) {
-            System.out.println((id + 1) + "번 명언은 존재하지 않습니다.");
-        }
-        //예외가 발생하지 않는다면 정상적으로 삭제 처리
-        else {
-            wiseSayings[id] = null;
-            System.out.println((id + 1) + "번 명언이 삭제되었습니다.");
+        int deleteTargetIndex = findIndexById(id);
+        //명언 id로 명언을 찾지 못했을 경우 예외 처리
+        if (deleteTargetIndex == -1) {
+            System.out.println((id) + "번 명언은 존재하지 않습니다.");
+        } else {
+            wiseSayings.remove(deleteTargetIndex);
+            System.out.println((id) + "번 명언이 삭제되었습니다.");
         }
     }
 
-    public void edit() {
-        int id = Integer.parseInt(command.substring(6)) - 1;
+    private  void edit() {
+        int id = Integer.parseInt(command.substring(6));
+
+        int editTargetIndex = findIndexById(id);
 
         //삭제 동작과 같은 예외 처리
-        if (id > 999 || wiseSayings[id] == null) {
-            System.out.println((id + 1) + "번 명언은 존재하지 않습니다.");
-        }
-        //예외가 발생하지 않는다면 정상적으로 수정 처리
-        else {
-            System.out.println("명언(기존) : " + wiseSayings[id].content);
+        if (editTargetIndex == -1) {
+            System.out.println((id) + "번 명언은 존재하지 않습니다.");
+        } else {
+            WiseSaying wiseSaying = wiseSayings.get(editTargetIndex);
+            System.out.println("명언(기존) : " + wiseSaying.getContent());
             System.out.print("명언 : ");
-            wiseSayings[id].content = sc.nextLine();
-            System.out.println("작가(기존) : " + wiseSayings[id].author);
+            wiseSaying.setContent(sc.nextLine());
+            System.out.println("작가(기존) : " + wiseSaying.getAuthor());
             System.out.print("작가 : ");
-            wiseSayings[id].author = sc.nextLine();
+            wiseSaying.setAuthor(sc.nextLine());
         }
     }
 }
