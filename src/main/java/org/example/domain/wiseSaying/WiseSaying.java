@@ -1,4 +1,4 @@
-package org.example;
+package org.example.domain.wiseSaying;
 
 public class WiseSaying {
     private int id;

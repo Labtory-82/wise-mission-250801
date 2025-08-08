@@ -1,6 +1,10 @@
-package org.example;
+package org.example.domain.wiseSaying;
 
-import java.util.*;
+import org.example.domain.wiseSaying.controller.SystemController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class App {
     //명령 입력받을 문자열
@@ -9,6 +13,7 @@ public class App {
     private List <WiseSaying> wiseSayings = new ArrayList<>();
     //명언 번호
     private int number = -1;
+    private SystemController systemController = new SystemController();
 
     public void run() {
 
@@ -39,6 +44,7 @@ public class App {
                 edit(rq);
             }
             if (actionName.equals("종료")) {
+                systemController.exit();
                 break;
             }
         }
