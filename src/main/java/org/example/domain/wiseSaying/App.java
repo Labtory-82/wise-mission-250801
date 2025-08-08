@@ -27,7 +27,7 @@ public class App {
             String actionName = rq.getActionName();
 
             //"등록"을 입력받았을 경우
-            if (actionName.equals("등록")) wiseSayingController.registration();
+            if (actionName.equals("등록")) wiseSayingController.write();
 
             //"목록"을 입력받았을 경우
             if (actionName.equals("목록")) wiseSayingController.list();

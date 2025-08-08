@@ -2,12 +2,12 @@ package org.example.domain.wiseSaying;
 
 public class WiseSaying {
     private int id;
-    private String content;
+    private String saying;
     private String author;
 
-    public WiseSaying(int id, String content, String author) {
+    public WiseSaying(int id, String saying, String author) {
         this.id = id;
-        this.content = content;
+        this.saying = saying;
         this.author = author;
     }
 
@@ -19,12 +19,12 @@ public class WiseSaying {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getSaying() {
+        return saying;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setSaying(String saying) {
+        this.saying = saying;
     }
 
     public String getAuthor() {
