@@ -16,27 +16,30 @@ public class App {
         //"종료" 명령이 입력될 때까지 반복
         String command = "";
 
-        while (!command.equals("종료")) {
+        while (true) {
             System.out.print("명령) ");
             //명령 입력 받기
             command = sc.nextLine();
 
+            Rq rq = new Rq(command);
+            String actionName = rq.getActionName();
+
             //"등록"을 입력받았을 경우
-            if (command.equals("등록")) registration();
+            if (actionName.equals("등록")) registration();
 
             //"목록"을 입력받았을 경우
-            if (command.equals("목록")) list();
+            if (actionName.equals("목록")) list();
 
             //삭제 명령을 입력받았을 경우. 명언 id가 다르게 들어오기 때문에 정규표현식으로 검사
-            if (command.matches("^삭제\\?id=\\d+$")) {
-                setParams(command);
-                delete();
+            if (actionName.equals("삭제")) {
+                delete(rq);
             }
-
             //수정 명령을 입력받았을 경우. 역시 정규표현식으로 검사
-            if (command.matches("^수정\\?id=\\d+$")) {
-                setParams(command);
-                edit();
+            if (actionName.equals("수정")) {
+                edit(rq);
+            }
+            if (actionName.equals("종료")) {
+                break;
             }
         }
     }
@@ -75,9 +78,9 @@ public class App {
 //
 //    }
 
-    private void delete() {
+    private void delete(Rq rq) {
         //입력값에서 id숫자 추출
-        String idStr = getParam("id");
+        String idStr = rq.getParam("id");
         int id = Integer.parseInt(idStr);
 
         if (wiseSayings.removeIf(wiseSaying -> wiseSaying.getId() == id)) {
@@ -94,8 +97,9 @@ public class App {
                 .orElse(null);
     }
 
-    private void edit() {
-        String idStr = getParam("id");
+    private void edit(Rq rq) {
+        System.out.println("수정");
+        String idStr = rq.getParam("id");
         int id = Integer.parseInt(idStr);
 
                 WiseSaying wiseSaying = findbyIDOrNull(id);

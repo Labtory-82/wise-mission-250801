@@ -6,15 +6,16 @@ import java.util.Map;
 public class Rq {
 
     //명령어 파라미터를 저장할 맵
-    private Map <String, String> paramMap;
+    private Map<String, String> paramMap;
+    private String actionName;
 
     public Rq(String command) {
         paramMap = new HashMap<>();
 
         String[] commandBits = command.split("\\?");
 
-        String actionName = commandBits[0];
-        String queryString  = "";
+        actionName = commandBits[0];
+        String queryString = "";
 
         if (commandBits.length > 1) {
             queryString = commandBits[1];
@@ -37,7 +38,11 @@ public class Rq {
         }
     }
 
-    private String getParam(String key) {
+    public String getActionName() {
+        return actionName;
+    }
+
+    public String getParam(String key) {
         return paramMap.get(key);
     }
 
