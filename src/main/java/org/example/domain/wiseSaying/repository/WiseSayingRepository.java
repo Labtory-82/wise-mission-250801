@@ -7,6 +7,8 @@ import java.util.List;
 
 public class WiseSayingRepository {
 
+    //명언 번호
+    private int number = -1;
     //명언 배열
     private List<WiseSaying> wiseSayings = new ArrayList<>();
 
@@ -21,8 +23,17 @@ public class WiseSayingRepository {
                 .orElse(null);
     }
 
-    public void save(WiseSaying wiseSaying) {
-        wiseSayings.add(wiseSaying);
+    public WiseSaying save(WiseSaying wiseSaying) {
+
+        if (wiseSaying.isNew()) {
+            //새로운 명언인 경우
+            number++;
+            wiseSaying.setId(number + 1);
+            wiseSayings.add(wiseSaying);
+        }
+
+        return wiseSaying;
+
     }
 
     public List<WiseSaying> reversedwiseSayings () {

@@ -7,15 +7,11 @@ import java.util.List;
 
 public class WiseSayingService {
 
-    //명언 번호
-    private int number = -1;
     WiseSayingRepository wiseSayingRepository = new WiseSayingRepository();
 
     public WiseSaying writeService(String saying, String author) {
-        //명언 번호. 등록할 때마다 증가
-        number++;
-        WiseSaying wiseSaying = new WiseSaying(number + 1, saying, author);
-        wiseSayingRepository.save(wiseSaying);
+        WiseSaying wiseSaying = new WiseSaying(0, saying, author);
+        wiseSaying = wiseSayingRepository.save(wiseSaying);
 
         return wiseSaying;
     }
@@ -35,5 +31,7 @@ public class WiseSayingService {
     public void editService(WiseSaying wiseSaying, String saying, String author) {
         wiseSaying.setSaying(saying);
         wiseSaying.setAuthor(author);
+
+        wiseSayingRepository.save(wiseSaying);
     }
 }
