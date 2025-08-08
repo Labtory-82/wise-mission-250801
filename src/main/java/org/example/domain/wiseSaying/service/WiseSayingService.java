@@ -1,39 +1,35 @@
 package org.example.domain.wiseSaying.service;
 
 import org.example.domain.wiseSaying.WiseSaying;
+import org.example.domain.wiseSaying.repository.WiseSayingRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WiseSayingService {
 
-    //명언 배열
-    private List<WiseSaying> wiseSayings = new ArrayList<>();
     //명언 번호
     private int number = -1;
+    WiseSayingRepository wiseSayingRepository = new WiseSayingRepository();
 
     public WiseSaying writeService(String saying, String author) {
         //명언 번호. 등록할 때마다 증가
         number++;
         WiseSaying wiseSaying = new WiseSaying(number + 1, saying, author);
-        wiseSayings.add(wiseSaying);
+        wiseSayingRepository.save(wiseSaying);
 
         return wiseSaying;
     }
 
     public List<WiseSaying> reversedwiseSayings () {
-        return wiseSayings.reversed();
+        return wiseSayingRepository.reversedwiseSayings();
     }
 
     public boolean deleteService(int id) {
-        return wiseSayings.removeIf(wiseSaying -> wiseSaying.getId() == id);
+        return wiseSayingRepository.deleteService(id);
     }
 
     public WiseSaying findbyIDOrNull(int id) {
-        return wiseSayings.stream()
-                .filter(wiseSaying -> wiseSaying.getId() == id)
-                .findFirst()
-                .orElse(null);
+        return wiseSayingRepository.findbyIDOrNull(id);
     }
 
     public void editService(WiseSaying wiseSaying, String saying, String author) {
