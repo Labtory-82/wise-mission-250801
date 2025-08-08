@@ -80,8 +80,7 @@ public class App {
 
     private void delete(Rq rq) {
         //입력값에서 id숫자 추출
-        String idStr = rq.getParam("id");
-        int id = Integer.parseInt(idStr);
+        int id = rq.getParamAsInt("id", -1);
 
         if (wiseSayings.removeIf(wiseSaying -> wiseSaying.getId() == id)) {
             System.out.println((id) + "번 명언이 삭제되었습니다.");
@@ -98,9 +97,7 @@ public class App {
     }
 
     private void edit(Rq rq) {
-        System.out.println("수정");
-        String idStr = rq.getParam("id");
-        int id = Integer.parseInt(idStr);
+        int id = rq.getParamAsInt("id", -1);
 
                 WiseSaying wiseSaying = findbyIDOrNull(id);
 
